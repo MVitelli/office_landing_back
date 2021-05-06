@@ -1,34 +1,24 @@
-const express = require('express')
-const nodemailer = require('nodemailer');
-const app = express();
 require('dotenv').config()
+const express = require('express');
+const sendMail = require('./src/services/mailer');
+const app = express();
 
-const PORT = 3009
+const cors = require('cors');
+app.use(cors());
 
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PW
-    }
-});
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-const mailOptions = {
-    from: 'protrabajadoresestudio@gmail.com',
-    to: '',
-    subject: 'Probando',
-    html: '<h1>Probando</h1><p>123</p>'
-};
+app.post('/api/mail', (req, res) => {
+    sendMail(req.body)
+        .then(() => {
+            res.send("Email sent");
+        })
+        .catch((error) => {
+            res.status(500).send(error);
+        })
+})
 
-transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-        console.log(error);
-    } else {
-        console.log('Email sent: ' + info.response);
-    }
-});
-
-
-app.listen(PORT, () => {
-    console.log(`Listening on port: `, PORT)
+app.listen(process.env.PORT, () => {
+    console.log(`Listening on port:`, process.env.PORT)
 })
