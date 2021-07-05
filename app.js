@@ -3,6 +3,10 @@ const express = require('express');
 const sendMail = require('./src/services/mailer');
 const app = express();
 
+// const http = require('http');
+const https = require('https');
+const fs = require('fs')
+
 const cors = require('cors');
 app.use(cors());
 
@@ -19,6 +23,11 @@ app.post('/api/mail', (req, res) => {
         })
 })
 
-app.listen(process.env.PORT, () => {
+const httpsServer = https.createServer({
+    key: fs.readFileSync(process.env.key),
+    cert: fs.readFileSync(process.env.cert),
+}, app);
+
+httpsServer.listen(process.env.PORT, () => {
     console.log(`Listening on port:`, process.env.PORT)
 })
