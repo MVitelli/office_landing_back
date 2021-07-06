@@ -1,4 +1,5 @@
-require('dotenv').config()
+const path = require('path'); 
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const sendMail = require('./src/services/mailer');
 const app = express();
@@ -23,9 +24,10 @@ app.post('/api/mail', (req, res) => {
         })
 })
 
+
 const httpsServer = https.createServer({
-    key: fs.readFileSync(process.env.key),
-    cert: fs.readFileSync(process.env.cert),
+    key: fs.readFileSync(process.env.PRIV_KEY),
+    cert: fs.readFileSync(process.env.CERT),
 }, app);
 
 httpsServer.listen(process.env.PORT, () => {
